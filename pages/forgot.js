@@ -2,11 +2,11 @@ import Head from "next/head";
 import Link from "next/link";
 import React from "react";
 
-const Login = () => {
+const Forgot = () => {
   return (
     <div>
       <Head>
-        <title>Shoppy - Login</title>
+        <title>Shoppy - Forgot</title>
       </Head>
       <html className="h-full bg-gray-50">
         <body className="h-full">
@@ -19,13 +19,13 @@ const Login = () => {
                   alt="Your Company"
                 />
                 <h2 className="mt-2 text-center text-3xl font-bold tracking-tight text-gray-900">
-                  Sign in to your account
+                  Forgot Password
                 </h2>
                 <p className="mt-2 text-center text-sm text-gray-600">
                   Or{" "}
-                  <Link href="/signup">
+                  <Link href="/login">
                     <a className="font-medium text-pink-600 hover:text-pink-500">
-                      Sign Up
+                      Login
                     </a>
                   </Link>
                 </p>
@@ -47,53 +47,11 @@ const Login = () => {
                     placeholder="Email address"
                   />
                 </div>
-                <div>
-                  <label for="password" className="sr-only">
-                    Password
-                  </label>
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autocomplete="current-password"
-                    required
-                    className="relative block w-full appearance-none rounded-none rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-pink-500 focus:outline-none focus:ring-pink-500 sm:text-sm"
-                    placeholder="Password"
-                  />
-                </div>
-
-                <div className="flex items-center justify-between my-5">
-                  <div className="flex items-center">
-                    <input
-                      id="remember-me"
-                      name="remember-me"
-                      type="checkbox"
-                      className="h-4 w-4 rounded border-gray-300 text-pink-600 focus:ring-pink-500"
-                    />
-                    <label
-                      for="remember-me"
-                      className="ml-2 block text-sm text-gray-900"
-                    >
-                      Remember me
-                    </label>
-                  </div>
-
-                  <div className="text-sm">
-                    <Link href={"/forgot"}>
-                      <a
-                        href="#"
-                        className="font-medium text-pink-600 hover:text-pink-500"
-                      >
-                        Forgot your password?
-                      </a>
-                    </Link>
-                  </div>
-                </div>
 
                 <div>
                   <button
                     type="submit"
-                    className="group relative flex w-full justify-center rounded-md border border-transparent bg-pink-600 py-2 px-4 text-sm font-medium text-white hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+                    className="group relative flex w-full justify-center rounded-md border border-transparent bg-pink-600 py-2 px-4 mt-5 text-sm font-medium text-white hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
                   >
                     <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                       <svg
@@ -110,7 +68,7 @@ const Login = () => {
                         />
                       </svg>
                     </span>
-                    Sign in
+                    Continue
                   </button>
                 </div>
               </form>
@@ -122,4 +80,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Forgot;

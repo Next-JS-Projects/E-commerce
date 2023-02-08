@@ -17,9 +17,9 @@ const Hoodies = () => {
           content="shoppy, shoppy.com, shop, ecomm, ecommerce"
         />
       </Head>
-      <section className="text-gray-600 body-font">
+      <section className="text-gray-600 body-font min-h-screen">
         <div className="container px-10 py-24 mx-auto">
-          <div className="flex flex-wrap -m-4">
+          <div className="flex flex-wrap -m-4 justify-center">
             <Link href="/product/wear-the-tshirt">
               <div className="lg:w-1/5 md:w-1/2 p-4 w-full cursor-pointer  shadow-lg m-5">
                 <a className="block relative  rounded overflow-hidden">
