@@ -160,8 +160,11 @@ const Checkout = ({ cart, clearCart, addToCart, removeFromCart, subTotal }) => {
             {Object.keys(cart).map((item) => {
               return (
                 <li key={item}>
-                  <div className="items flex my-5">
-                    <div className=" font-semibold">{cart[item].name}</div>
+                  <div className="items flex mt-5">
+                    <div className=" font-semibold">
+                      {cart[item].name} ({cart[item].size}/{cart[item].variant})
+                    </div>
+
                     <div className="flex items-center justify-center w-1/3 font-semibold">
                       <AiFillMinusCircle
                         onClick={() =>
@@ -191,7 +194,8 @@ const Checkout = ({ cart, clearCart, addToCart, removeFromCart, subTotal }) => {
                         className="mx-2 cursor-pointer text-pink-500"
                       />
                     </div>
-                  </div>
+                    </div>
+                    <p className="text-sm mb-5 text-slate-700">₹{cart[item].price}</p>
                 </li>
               );
             })}

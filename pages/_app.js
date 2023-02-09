@@ -1,11 +1,13 @@
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import "@/styles/globals.css";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 export default function App({ Component, pageProps }) {
   const [cart, setCart] = useState({});
   const [subTotal, setSubTotal] = useState(0);
+  const router = useRouter();
 
   // GETTING CART FROM LOCALSTORAGE
 
@@ -13,12 +15,11 @@ export default function App({ Component, pageProps }) {
     try {
       if (localStorage.getItem("cart")) {
         setCart(JSON.parse(localStorage.getItem("cart")));
-        saveCart(JSON.parse(localStorage.getItem("cart")))
+        saveCart(JSON.parse(localStorage.getItem("cart")));
       }
     } catch (err) {
       localStorage.clear();
     }
-
   }, []);
 
   // SAVING CART TO LOCALSTORAGE
@@ -48,6 +49,16 @@ export default function App({ Component, pageProps }) {
     saveCart(newCart);
   };
 
+  // BUY NOW
+
+  const buyNow = (itemCode, qty, price, name, size, variant) => {
+    let newCart = { slug: { qty: 1, price, name, size, variant } };
+
+    setCart(newCart);
+    saveCart(newCart);
+    router.push("/checkout");
+  };
+
   // CLEARING CART
 
   const clearCart = () => {
@@ -73,8 +84,9 @@ export default function App({ Component, pageProps }) {
   return (
     <div>
       <Navbar
-      key={subTotal}
+        key={subTotal}
         cart={cart}
+        buyNow={buyNow}
         addToCart={addToCart}
         removeFromCart={removeFromCart}
         clearCart={clearCart}
@@ -82,6 +94,7 @@ export default function App({ Component, pageProps }) {
       />
       <Component
         cart={cart}
+        buyNow={buyNow}
         addToCart={addToCart}
         removeFromCart={removeFromCart}
         clearCart={clearCart}

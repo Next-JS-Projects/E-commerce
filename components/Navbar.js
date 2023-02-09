@@ -35,17 +35,17 @@ const Navbar = ({ cart, addToCart, removeFromCart, clearCart, subTotal }) => {
 
         <nav className="nav">
           <ul className="flex items-center space-x-4 font-bold md:text-md">
-            <li>
-              <Link href="/shirts">Shirts</Link>
+            <li className="hover:text-pink-600">
+              <Link  href="/shirts">Shirts</Link>
             </li>
-            <li>
-              <Link href="/hoodies">Hoodies</Link>
+            <li className="hover:text-pink-600">
+              <Link  href="/hoodies">Hoodies</Link>
             </li>
-            <li>
-              <Link href="/mugs">Mugs</Link>
+            <li className="hover:text-pink-600">
+              <Link  href="/mugs">Mugs</Link>
             </li>
-            <li>
-              <Link href="/stickers">Stickers</Link>
+            <li className="hover:text-pink-600">
+              <Link  href="/stickers">Stickers</Link>
             </li>
           </ul>
         </nav>
@@ -66,7 +66,7 @@ const Navbar = ({ cart, addToCart, removeFromCart, clearCart, subTotal }) => {
       {/* CART SIDEBAR */}
       <div
         ref={ref}
-        className={`w-72 h-[100vh] sideCart  absolute top-0 right-0 bg-pink-100 py-10 px-8 transform transition-transform ${
+        className={`w-72 h-[100vh] sideCart overflow-hidden  hover:overflow-y-scroll absolute top-0 right-0 bg-pink-100 py-10 px-8 transform transition-transform ${
           Object.keys(cart).length !== 0 ? "translate-x-0" : "translate-x-full"
         } `}
       >
@@ -85,9 +85,15 @@ const Navbar = ({ cart, addToCart, removeFromCart, clearCart, subTotal }) => {
           )}
           {Object.keys(cart).map((item) => {
             return (
-              <li key={item}>
-                <div className="items flex my-5">
-                  <div className="w-2/3 font-semibold">{cart[item].name}</div>
+              <li key={item} className="my-5">
+                <div className="items flex ">
+                  <div className="w-2/3 font-semibold">
+                    {cart[item].name} ({cart[item].size}/{cart[item].variant})
+                    &nbsp;&nbsp;
+                    <p className="text-sm text-slate-700">
+                      ₹{cart[item].price}
+                    </p>
+                  </div>
                   <div className="flex items-center justify-center w-1/3 font-semibold">
                     <AiFillMinusCircle
                       onClick={() =>
