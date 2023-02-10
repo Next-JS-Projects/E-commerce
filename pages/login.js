@@ -1,13 +1,86 @@
 import Head from "next/head";
 import Link from "next/link";
-import React from "react";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 
 const Login = () => {
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+
+  const router = useRouter();
+
+  const handleChange = (e) => {
+    if (e.target.name == "email") {
+      setEmail(e.target.value);
+    }
+    if (e.target.name == "password") {
+      setPassword(e.target.value);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const data = { email, password };
+
+    let res = await fetch("http://localhost:3000/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    let response = await res.json();
+
+    if (response.success) {
+      toast.success("Logged in successfully", {
+        position: "top-left",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      setTimeout(() => {
+        router.push("/");
+      }, 1000);
+    } else {
+      toast.error(response.error, {
+        position: "top-left",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+
+    setEmail("");
+    setPassword("");
+  };
   return (
     <div>
       <Head>
         <title>Shoppy - Login</title>
       </Head>
+      <ToastContainer
+        position="top-left"
+        autoClose={1000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <html className="h-full bg-gray-50">
         <body className="h-full">
           <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -30,7 +103,7 @@ const Login = () => {
                   </Link>
                 </p>
               </div>
-              <form className="mt-8" action="#" method="POST">
+              <form onSubmit={handleSubmit} className="mt-8">
                 <input type="hidden" name="remember" value="true" />
                 <div className="-space-y-px rounded-md shadow-sm" />
                 <div>
@@ -38,6 +111,8 @@ const Login = () => {
                     Email address
                   </label>
                   <input
+                    onChange={handleChange}
+                    value={email}
                     id="email-address"
                     name="email"
                     type="email"
@@ -52,6 +127,8 @@ const Login = () => {
                     Password
                   </label>
                   <input
+                    onChange={handleChange}
+                    value={password}
                     id="password"
                     name="password"
                     type="password"

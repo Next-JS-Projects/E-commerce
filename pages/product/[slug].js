@@ -2,6 +2,8 @@ import Product from "@/models/Product";
 import mongoose from "mongoose";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+
 
 const Post = ({ addToCart, product, variants, buyNow }) => {
   const router = useRouter();
@@ -16,8 +18,28 @@ const Post = ({ addToCart, product, variants, buyNow }) => {
 
     if (pinCode.includes(parseInt(pin))) {
       setService(true);
+      toast.success("Pincode is serviceable", {
+        position: "bottom-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
       setService(false);
+      toast.error("Sorry! Pincode not serviceable", {
+        position: "bottom-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
 
@@ -35,15 +57,29 @@ const Post = ({ addToCart, product, variants, buyNow }) => {
 
   return (
     <div>
+      <ToastContainer
+        position="bottom-center"
+        autoClose={1000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      {/* Same as */}
+      <ToastContainer />
       <section className="text-gray-600 body-font overflow-hidden">
         <div className="container px-5 py-14 mx-auto">
-          <div className="lg:w-4/5 mx-auto flex flex-wrap">
+          <div className="lg:w-4/5 h-[65vh] mx-auto flex flex-wrap">
             <img
               alt="ecommerce"
               className="lg:w-1/2 lg:h-auto px-10 object-cover object-top rounded"
               src={product.image}
             />
-            <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
+            <div className="lg:w-1/2 w-full h-186 lg:pl-10 lg:py-6 mt-6 lg:mt-0">
               <h2 className="text-sm title-font text-gray-500 tracking-widest">
                 Shoppy
               </h2>
