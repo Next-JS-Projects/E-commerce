@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 
 const Login = () => {
@@ -19,6 +19,13 @@ const Login = () => {
     }
   };
 
+  useEffect(() => {
+    let token = localStorage.getItem("token");
+    if (token) {
+      router.push("/");
+    }
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = { email, password };
@@ -33,7 +40,10 @@ const Login = () => {
 
     let response = await res.json();
 
+    let token = response.token;
+
     if (response.success) {
+      localStorage.setItem("token", token);
       toast.success("Logged in successfully", {
         position: "top-left",
         autoClose: 2000,
@@ -44,7 +54,6 @@ const Login = () => {
         progress: undefined,
         theme: "light",
       });
-
       setTimeout(() => {
         router.push("/");
       }, 1000);
@@ -104,7 +113,6 @@ const Login = () => {
                 </p>
               </div>
               <form onSubmit={handleSubmit} className="mt-8">
-                <input type="hidden" name="remember" value="true" />
                 <div className="-space-y-px rounded-md shadow-sm" />
                 <div>
                   <label for="email-address" className="sr-only">
@@ -140,21 +148,6 @@ const Login = () => {
                 </div>
 
                 <div className="flex items-center justify-between my-5">
-                  <div className="flex items-center">
-                    <input
-                      id="remember-me"
-                      name="remember-me"
-                      type="checkbox"
-                      className="h-4 w-4 rounded border-gray-300 text-pink-600 focus:ring-pink-500"
-                    />
-                    <label
-                      for="remember-me"
-                      className="ml-2 block text-sm text-gray-900"
-                    >
-                      Remember me
-                    </label>
-                  </div>
-
                   <div className="text-sm">
                     <Link href={"/forgot"}>
                       <a

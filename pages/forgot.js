@@ -1,8 +1,16 @@
 import Head from "next/head";
 import Link from "next/link";
-import React from "react";
+import { useRouter } from "next/router";
+import React, { useEffect } from "react";
 
 const Forgot = () => {
+  const router = useRouter();
+  useEffect(() => {
+    let token = localStorage.getItem("token");
+    if (token) {
+      router.push("/");
+    }
+  }, []);
   return (
     <div>
       <Head>

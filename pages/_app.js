@@ -4,15 +4,25 @@ import "@/styles/globals.css";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
+import LoadingBar from "react-top-loading-bar";
 
 export default function App({ Component, pageProps }) {
   const [cart, setCart] = useState({});
   const [subTotal, setSubTotal] = useState(0);
   const router = useRouter();
+  const [user, setUser] = useState({ value: null });
+  const [key, setKey] = useState();
+  const [progress, setProgress] = useState(0);
 
   // GETTING CART FROM LOCALSTORAGE
 
   useEffect(() => {
+    router.events.on("routeChangeStart", () => {
+      setProgress(40);
+    });
+    router.events.on("routeChangeComplete", () => {
+      setProgress(100);
+    });
     try {
       if (localStorage.getItem("cart")) {
         setCart(JSON.parse(localStorage.getItem("cart")));
@@ -21,7 +31,21 @@ export default function App({ Component, pageProps }) {
     } catch (err) {
       localStorage.clear();
     }
-  }, []);
+
+    let token = localStorage.getItem("token");
+    if (token) {
+      setUser({ value: token });
+      setKey(Math.random());
+    }
+  }, [router.query]);
+
+  // LOGOUT
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    setUser({ value: null });
+    setKey(Math.random());
+  };
 
   // SAVING CART TO LOCALSTORAGE
 
@@ -84,9 +108,17 @@ export default function App({ Component, pageProps }) {
 
   return (
     <div>
+      <LoadingBar
+        color="#ff2d55"
+        progress={progress}
+        waitingTime={400}
+        onLoaderFinished={() => setProgress(0)}
+      />
       <Navbar
-        key={subTotal}
+        user={user}
+        key={key}
         cart={cart}
+        logout={logout}
         buyNow={buyNow}
         addToCart={addToCart}
         removeFromCart={removeFromCart}

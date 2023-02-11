@@ -38,7 +38,7 @@ const Hoodies = ({ products }) => {
                     <a className="block relative  rounded overflow-hidden">
                       <img
                         alt="ecommerce"
-                        className="object object-fit object-center m-auto h-[32vh] md:h-[32vh] block"
+                        className="object object-fit object-center m-auto md:h-[32vh] block"
                         src={products[item].image}
                       />
                     </a>

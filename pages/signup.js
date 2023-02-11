@@ -1,12 +1,15 @@
 import Head from "next/head";
 import Link from "next/link";
-import React, { useState } from "react";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 
 const Signup = () => {
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+
+  const router = useRouter();
 
   const handleChange = (e) => {
     if (e.target.name == "name") {
@@ -34,23 +37,41 @@ const Signup = () => {
 
     let response = await res.json();
 
-    
-
-    toast.success("Your account created successfully", {
-      position: "bottom-left",
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
+    if (response.success) {
+      toast.success("Your account created successfully", {
+        position: "bottom-left",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } else {
+      toast.error("Something went wrong", {
+        position: "bottom-left",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
 
     setName("");
     setEmail("");
     setPassword("");
   };
+
+  useEffect(() => {
+    let token = localStorage.getItem("token");
+    if (token) {
+      router.push("/");
+    }
+  }, []);
 
   return (
     <div>

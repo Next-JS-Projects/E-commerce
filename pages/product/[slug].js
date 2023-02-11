@@ -73,10 +73,11 @@ const Post = ({ addToCart, product, variants, buyNow }) => {
       <ToastContainer />
       <section className="text-gray-600 body-font overflow-hidden">
         <div className="container px-5 py-14 mx-auto">
-          <div className="lg:w-4/5 h-[65vh] mx-auto flex flex-wrap">
+          <div className="lg:w-4/5 h-[125vh] mx-auto flex flex-wrap">
             <img
               alt="ecommerce"
-              className="lg:w-1/2 lg:h-auto px-10 object-cover object-top rounded"
+              // className="lg:w-1/2 md:h-[55vh]  px-10 rounded"
+              className="lg:w-1/2 md:h-[65vh]  px-20 object-contain object-center rounded"
               src={product.image}
             />
             <div className="lg:w-1/2 w-full h-186 lg:pl-10 lg:py-6 mt-6 lg:mt-0">

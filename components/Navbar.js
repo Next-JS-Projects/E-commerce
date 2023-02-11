@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
   AiOutlineShoppingCart,
   AiFillCloseCircle,
@@ -10,8 +10,17 @@ import {
 import { BsFillBagCheckFill } from "react-icons/bs";
 import { MdAccountCircle } from "react-icons/md";
 
-const Navbar = ({ cart, addToCart, removeFromCart, clearCart, subTotal }) => {
+const Navbar = ({
+  user,
+  logout,
+  cart,
+  addToCart,
+  removeFromCart,
+  clearCart,
+  subTotal,
+}) => {
   const ref = useRef();
+  const [dropdown, setDropdown] = useState(false);
 
   const toggleCart = () => {
     if (ref.current.classList.contains("translate-x-full")) {
@@ -22,10 +31,33 @@ const Navbar = ({ cart, addToCart, removeFromCart, clearCart, subTotal }) => {
       ref.current.classList.add("translate-x-full");
     }
   };
+
   return (
     <div className="sticky top-0 bg-white z-10">
+      {/*<ToastContainer
+        position="bottom-left"
+        autoClose={1000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      toast.success("Your account created successfully", {
+        position: "bottom-left",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      }); */}
       <div className="flex flex-col justify-center items-center md:flex-row md:justify-start py-1  shadow-md">
-        <div className="logo mx-5">
+        <div className="logo mr-auto md:mx-5">
           <Link href="/">
             <a>
               <Image src="/frontlogo.png" alt="" width={180} height={40} />
@@ -57,13 +89,53 @@ const Navbar = ({ cart, addToCart, removeFromCart, clearCart, subTotal }) => {
             </li>
           </ul>
         </nav>
-
-        <div className="cursor-pointer cart absolute right-0 mx-5 top-4 flex">
-          <Link href={"/login"}>
-            <a>
+        <div className="cursor-pointer items-center cart absolute right-0 mx-5 top-4 flex">
+          <a
+            onMouseOver={() => setDropdown(true)}
+            onMouseLeave={() => setDropdown(false)}
+          >
+            {user.value && (
               <MdAccountCircle className="text-xl md:text-2xl mx-2" />
-            </a>
-          </Link>
+            )}
+            {dropdown && (
+              <div
+                onMouseOver={() => setDropdown(true)}
+                onMouseLeave={() => setDropdown(false)}
+                className="absolute right-8 bg-white shadow-lg border top-6 rounded-md px-5 w-32 py-4 text-sm"
+              >
+                <ul>
+                  <Link href="/myaccount">
+                    <li className="hover:text-pink-700 text-sm font-semibold">
+                      My Account
+                    </li>
+                  </Link>
+
+                  <Link href="/orders">
+                    <li className="hover:text-pink-700 text-sm font-semibold">
+                      Orders{" "}
+                    </li>
+                  </Link>
+
+                  <li
+                    onClick={logout}
+                    className="hover:text-pink-700 text-sm font-semibold"
+                  >
+                    Logout
+                  </li>
+                </ul>
+              </div>
+            )}
+          </a>
+
+          {!user.value && (
+            <Link href={"/login"}>
+              <a>
+                <button className="bg-pink-600 px-2 py-1 rounded-md text-sm text-white mx-2">
+                  Login
+                </button>
+              </a>
+            </Link>
+          )}
           <AiOutlineShoppingCart
             onClick={toggleCart}
             className="text-xl md:text-2xl "
