@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import React, { useRef, useState } from "react";
+import { useRouter } from "next/router";
+import React, { useEffect, useRef, useState } from "react";
 import {
   AiOutlineShoppingCart,
   AiFillCloseCircle,
@@ -21,16 +22,28 @@ const Navbar = ({
 }) => {
   const ref = useRef();
   const [dropdown, setDropdown] = useState(false);
+  const [sidebar, setSidebar] = useState(false);
+
+  const router = useRouter();
 
   const toggleCart = () => {
-    if (ref.current.classList.contains("translate-x-full")) {
-      ref.current.classList.remove("translate-x-full");
-      ref.current.classList.add("translate-x-0");
-    } else if (ref.current.classList.contains("translate-x-0")) {
-      ref.current.classList.remove("translate-x-0");
-      ref.current.classList.add("translate-x-full");
-    }
+    // if (ref.current.classList.contains("translate-x-full")) {
+    //   ref.current.classList.remove("translate-x-full");
+    //   ref.current.classList.add("translate-x-0");
+    // } else if (ref.current.classList.contains("translate-x-0")) {
+    //   ref.current.classList.remove("translate-x-0");
+    //   ref.current.classList.add("translate-x-full");
+    // }
+    setSidebar(!sidebar);
   };
+
+  useEffect(() => {
+    Object.keys(cart).length === 0 && setSidebar(true);
+    let exempted = ["/checkout", "/orders", "/order", "myaccount"];
+    if (exempted.includes(router.pathname)) {
+      setSidebar(false);
+    }
+  }, []);
 
   return (
     <div className="sticky top-0 bg-white z-10">
@@ -146,8 +159,8 @@ const Navbar = ({
       {/* CART SIDEBAR */}
       <div
         ref={ref}
-        className={`w-72 h-[100vh] sideCart overflow-hidden  hover:overflow-y-scroll absolute top-0 right-0 bg-pink-100 py-10 px-8 transform transition-transform ${
-          Object.keys(cart).length !== 0 ? "translate-x-0" : "translate-x-full"
+        className={`w-72 min-h-screen sideCart overflow-hidden  hover:overflow-y-scroll absolute top-0 right-0 bg-pink-100 py-10 px-8 transform transition-transform ${
+          sidebar ? "right-0" : "-right-96"
         } `}
       >
         <h2 className="font-bold text-xl text-center">Shopping Cart</h2>
@@ -211,14 +224,18 @@ const Navbar = ({
         <span className="font-bold">Subtotal : ₹{subTotal}</span>
         <div className="flex">
           <Link href={"/checkout"}>
-            <button className="flex mt-6 mr-2 text-white bg-pink-500 border-0 py-2 px-2 focus:outline-none hover:bg-pink-600 rounded text-sm">
+            <button
+              disabled={Object.keys(cart).length === 0}
+              className="disabled:bg-pink-400  flex mt-6 mr-2 text-white bg-pink-500 border-0 py-2 px-2 focus:outline-none hover:bg-pink-600 rounded text-sm"
+            >
               <BsFillBagCheckFill className="m-1" />
               Checkout
             </button>
           </Link>
           <button
             onClick={clearCart}
-            className="flex mt-6 mr-2 text-white bg-pink-500 border-0 py-2 px-2 focus:outline-none hover:bg-pink-600 rounded text-sm"
+            disabled={Object.keys(cart).length === 0}
+            className="disabled:bg-pink-400  flex mt-6 mr-2 text-white bg-pink-500 border-0 py-2 px-2 focus:outline-none hover:bg-pink-600 rounded text-sm"
           >
             Clear Cart
           </button>

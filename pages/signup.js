@@ -5,9 +5,9 @@ import React, { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 
 const Signup = () => {
-  const [name, setName] = useState();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const router = useRouter();
 
@@ -27,7 +27,7 @@ const Signup = () => {
     e.preventDefault();
     const data = { name, email, password };
 
-    let res = await fetch("http://localhost:3000/api/signup", {
+    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -67,7 +67,7 @@ const Signup = () => {
   };
 
   useEffect(() => {
-    let token = localStorage.getItem("token");
+    let token = localStorage.getItem("myuser");
     if (token) {
       router.push("/");
     }
@@ -116,7 +116,7 @@ const Signup = () => {
                 <input type="hidden" name="remember" value="true" />
                 <div className="-space-y-px rounded-md shadow-sm" />
                 <div>
-                  <label for="password" className="sr-only">
+                  <label htmlFor="password" className="sr-only">
                     Name
                   </label>
                   <input
@@ -125,14 +125,14 @@ const Signup = () => {
                     name="name"
                     type="text"
                     value={name}
-                    autocomplete="name"
+                    autoComplete="name"
                     required
                     className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-pink-500 focus:outline-none focus:ring-pink-500 sm:text-sm"
                     placeholder="Name"
                   />
                 </div>
                 <div>
-                  <label for="email-address" className="sr-only">
+                  <label htmlFor="email-address" className="sr-only">
                     Email address
                   </label>
                   <input
@@ -141,14 +141,14 @@ const Signup = () => {
                     name="email"
                     type="email"
                     value={email}
-                    autocomplete="email"
+                    autoComplete="email"
                     required
                     className="relative block w-full appearance-none rounded-none  border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-pink-500 focus:outline-none focus:ring-pink-500 sm:text-sm"
                     placeholder="Email address"
                   />
                 </div>
                 <div>
-                  <label for="password" className="sr-only">
+                  <label htmlFor="password" className="sr-only">
                     Password
                   </label>
                   <input
@@ -157,7 +157,7 @@ const Signup = () => {
                     name="password"
                     value={password}
                     type="password"
-                    autocomplete="current-password"
+                    autoComplete="current-password"
                     required
                     className="relative block w-full appearance-none rounded-none rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-pink-500 focus:outline-none focus:ring-pink-500 sm:text-sm"
                     placeholder="Password"
@@ -178,9 +178,9 @@ const Signup = () => {
                         aria-hidden="true"
                       >
                         <path
-                          fill-rule="evenodd"
+                          fillRule="evenodd"
                           d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z"
-                          clip-rule="evenodd"
+                          clipRule="evenodd"
                         />
                       </svg>
                     </span>

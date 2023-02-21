@@ -1,22 +1,29 @@
 import Product from "@/models/Product";
 import mongoose from "mongoose";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 
-
 const Post = ({ addToCart, product, variants, buyNow }) => {
+  const [color, setColor] = useState(product.color);
+  const [size, setSize] = useState(product.size);
+
   const router = useRouter();
   const { slug } = router.query;
 
   const [pin, setPin] = useState();
   const [service, setService] = useState();
 
-  const checkServiceability = async () => {
-    const pins = await fetch("http://localhost:3000/api/pincode");
-    const pinCode = await pins.json();
+  useEffect(() => {
+    setColor(product.color);
+    setSize(product.size);
+  }, [router.query]);
 
-    if (pinCode.includes(parseInt(pin))) {
+  const checkServiceability = async () => {
+    const pins = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/pincode`);
+    const pinJson = await pins.json();
+
+    if (Object.keys(pinJson).includes(pin)) {
       setService(true);
       toast.success("Pincode is serviceable", {
         position: "bottom-center",
@@ -47,12 +54,10 @@ const Post = ({ addToCart, product, variants, buyNow }) => {
     setPin(e.target.value);
   };
 
-  const [color, setColor] = useState(product.color);
-  const [size, setSize] = useState(product.size);
-
   const refreshVariant = (newSize, newColor) => {
-    let url = `http://localhost:3000/product/${variants[newColor][newSize]["slug"]}`;
-    window.location = url;
+    let url = `${process.env.NEXT_PUBLIC_HOST}/product/${variants[newColor][newSize]["slug"]}`;
+    // window.location = url;
+    router.push(url);
   };
 
   return (

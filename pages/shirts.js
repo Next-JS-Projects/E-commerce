@@ -139,18 +139,23 @@ export async function getServerSideProps() {
         item.availableQty > 0
       ) {
         shirts[item.title].color.push(item.color);
+        // shirts[item.title].color = item.color;
       }
       if (
         !shirts[item.title].size.includes(item.size) &&
         item.availableQty > 0
       ) {
         shirts[item.title].size.push(item.size);
+        // shirts[item.title].size = item.size;
       }
     } else {
       shirts[item.title] = JSON.parse(JSON.stringify(item));
       if (item.availableQty > 0) {
         shirts[item.title].color = [item.color];
         shirts[item.title].size = [item.size];
+      } else {
+        shirts[item.title].color = [];
+        shirts[item.title].size = [];
       }
     }
   }
