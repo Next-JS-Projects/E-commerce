@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import LoadingBar from "react-top-loading-bar";
 
+
 export default function App({ Component, pageProps }) {
   const [cart, setCart] = useState({});
   const [subTotal, setSubTotal] = useState(0);
@@ -120,29 +121,31 @@ export default function App({ Component, pageProps }) {
         waitingTime={400}
         onLoaderFinished={() => setProgress(0)}
       />
-      {key && (
-        <Navbar
-          user={user}
-          key={key}
-          cart={cart}
-          logout={logout}
-          buyNow={buyNow}
-          addToCart={addToCart}
-          removeFromCart={removeFromCart}
-          clearCart={clearCart}
-          subTotal={subTotal}
-        />
-      )}
-      <Component
-        cart={cart}
-        buyNow={buyNow}
-        key={setKey}
-        addToCart={addToCart}
-        removeFromCart={removeFromCart}
-        clearCart={clearCart}
-        subTotal={subTotal}
-        {...pageProps}
-      />
+      
+          {key && (
+            <Navbar
+              user={user}
+              key={key}
+              cart={cart}
+              logout={logout}
+              buyNow={buyNow}
+              addToCart={addToCart}
+              removeFromCart={removeFromCart}
+              clearCart={clearCart}
+              subTotal={subTotal}
+            />
+          )}
+          <Component
+            cart={cart}
+            buyNow={buyNow}
+            key={setKey}
+            addToCart={addToCart}
+            removeFromCart={removeFromCart}
+            clearCart={clearCart}
+            subTotal={subTotal}
+            {...pageProps}
+          />
+      
       <Footer />
     </div>
   );
