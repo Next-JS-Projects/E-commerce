@@ -1,22 +1,169 @@
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 
 const Forgot = () => {
   const router = useRouter();
+
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [cpassword, setCPassword] = useState("")
+
   useEffect(() => {
     let token = localStorage.getItem("myuser");
     if (token) {
       router.push("/");
     }
+
   }, []);
+
+  const handleChange = async (e) => {
+    if (e.target.name == "email") {
+      setEmail(e.target.value);
+    }
+    if (e.target.name == "password") {
+      setPassword(e.target.value);
+    }
+    if (e.target.name == "cpassword") {
+      setCPassword(e.target.value);
+    }
+  };
+
+  // SENDING A RESET EMAIL TO USER 
+
+  const sendResetEmail = async () => {
+    let data = { email, sendMail: true };
+    let response = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/forgot`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    let res = await response.json();
+
+    if (response.success) {
+      localStorage.setItem(
+        "myuser",
+        JSON.stringify({
+          token: response.token,
+          email: response.email,
+        })
+      );
+      toast.success("Email is sent to your account", {
+        position: "top-left",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      setTimeout(() => {
+        router.push("/");
+      }, 1000);
+    } else {
+      toast.error(response.error, {
+        position: "top-left",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  }
+
+
+  // ALLOWING USER TO RESET THE PASSWORD 
+
+  const resetPassword = async () => {
+
+    if (password == cpassword) {
+
+      let data = { password, sendMail: false };
+      let response = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/forgot`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      let res = await response.json();
+
+      if (response.success) {
+        localStorage.setItem(
+          "myuser",
+          JSON.stringify({
+            token: response.token,
+            email: response.email,
+          })
+        );
+        toast.success("Password has been changed", {
+          position: "top-left",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        setTimeout(() => {
+          router.push("/login");
+        }, 1000);
+      } else {
+        toast.error(response.error, {
+          position: "top-left",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+    } else {
+      toast.error("Something went wrong", {
+        position: "top-left",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  }
+
   return (
-    <div>
+    <>
       <Head>
         <title>Shoppy - Forgot</title>
       </Head>
-      <html className="h-full bg-gray-50">
+      <ToastContainer
+        position="top-left"
+        autoClose={1000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      <html className="min-h-full my-5 bg-gray-50">
+
         <body className="h-full">
           <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
             <div className="w-full max-w-md space-y-8">
@@ -38,53 +185,131 @@ const Forgot = () => {
                   </Link>
                 </p>
               </div>
-              <form className="mt-8" action="#" method="POST">
-                <input type="hidden" name="remember" value="true" />
-                <div className="-space-y-px rounded-md shadow-sm" />
+              {router.query.token &&
                 <div>
-                  <label htmlFor="email-address" className="sr-only">
-                    Email address
-                  </label>
-                  <input
-                    id="email-address"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-pink-500 focus:outline-none focus:ring-pink-500 sm:text-sm"
-                    placeholder="Email address"
-                  />
-                </div>
+                  <input type="hidden" name="remember" value="true" />
+                  <div className="-space-y-px rounded-md shadow-sm" />
 
+                  {/* PASSWORD */}
+                  <div>
+                    <label htmlFor="password" className="sr-only">
+                      Password
+                    </label>
+                    <input
+                      onChange={handleChange}
+                      id="password"
+                      name="password"
+                      type="password"
+                      value={password}
+                      autoComplete="password"
+                      required
+                      className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-pink-500 focus:outline-none focus:ring-pink-500 sm:text-sm"
+                      placeholder="New Password"
+                    />
+                  </div>
+
+
+                  {/* CONFIRM PASSWORD */}
+
+                  <div>
+                    <label htmlFor="cpassword" className="sr-only">
+                      Confirm Password
+                    </label>
+                    <input
+                      onChange={handleChange}
+                      id="cpassword"
+                      name="cpassword"
+                      type="password"
+                      value={cpassword}
+                      autoComplete="cpassword"
+                      required
+                      className="relative block w-full appearance-none rounded-none rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-pink-500 focus:outline-none focus:ring-pink-500 sm:text-sm"
+                      placeholder="Confirm Password"
+                    />
+                  </div>
+                  <div className="py-2">
+                    {password && password !== cpassword && <span className="text-red-600">Password don't match</span>}
+                    {password && password === cpassword && <span className="text-green-600">Password matched</span>}
+                  </div>
+
+
+                  <div>
+                    <button
+                      onClick={resetPassword}
+                      type="submit"
+                      className="group relative flex w-full justify-center rounded-md border border-transparent bg-pink-600 py-2 px-4 mt-5 text-sm font-medium text-white hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+                    >
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <svg
+                          className="h-5 w-5 text-pink-500 group-hover:text-pink-400"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </span>
+                      Continue
+                    </button>
+                  </div>
+                </div>}
+              {!router.query.token &&
                 <div>
-                  <button
-                    type="submit"
-                    className="group relative flex w-full justify-center rounded-md border border-transparent bg-pink-600 py-2 px-4 mt-5 text-sm font-medium text-white hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
-                  >
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                      <svg
-                        className="h-5 w-5 text-pink-500 group-hover:text-pink-400"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        aria-hidden="true"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </span>
-                    Continue
-                  </button>
+                  <input type="hidden" name="remember" value="true" />
+                  <div className="-space-y-px rounded-md shadow-sm" />
+                  <div>
+                    <label htmlFor="email-address" className="sr-only">
+                      Email address
+                    </label>
+                    <input
+                      onChange={handleChange}
+                      id="email-address"
+                      name="email"
+                      type="email"
+                      value={email}
+                      autoComplete="email"
+                      required
+                      className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-pink-500 focus:outline-none focus:ring-pink-500 sm:text-sm"
+                      placeholder="Email address"
+                    />
+                  </div>
+
+                  <div>
+                    <button
+                      onClick={sendResetEmail}
+                      type="submit"
+                      className="group relative flex w-full justify-center rounded-md border border-transparent bg-pink-600 py-2 px-4 mt-5 text-sm font-medium text-white hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+                    >
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <svg
+                          className="h-5 w-5 text-pink-500 group-hover:text-pink-400"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </span>
+                      Continue
+                    </button>
+                  </div>
                 </div>
-              </form>
+              }
             </div>
           </div>
         </body>
       </html>
-    </div>
+    </>
   );
 };
 

@@ -3,10 +3,21 @@ const PaytmChecksum = require("paytmchecksum");
 import Order from "@/models/Order";
 import connectDb from "@/middleware/Mongoose";
 import Product from "@/models/Product";
-import { truncateSync } from "fs";
+import pincodes from "../../pincodes.json";
 
 const handler = async (req, res) => {
   if (req.method === "POST") {
+    // CHECK IF THE PINCODE IS SERVICABLE
+
+    if (!Object.keys(pincodes).includes(req.body.pincode)) {
+      res.status(200).json({
+        success: false,
+        error: "Your Pincode is not serviceable",
+        cartClear: false,
+      });
+      return;
+    }
+
     // CHECK IF THE CART IS TAMPERED
     let product;
     let sumTotal = 0;
@@ -16,6 +27,7 @@ const handler = async (req, res) => {
       res.status(200).json({
         success: false,
         error: "Your cart is empty. Please try again!",
+        cartClear: false,
       });
     }
 
@@ -29,6 +41,7 @@ const handler = async (req, res) => {
         res.status(200).json({
           success: false,
           error: "Some items in your cart are out of stock. Please try again!",
+          cartClear: true,
         });
       }
 
@@ -36,6 +49,7 @@ const handler = async (req, res) => {
         res.status(200).json({
           success: false,
           error: "The price of some items in your cart have changed",
+          cartClear: true,
         });
         return;
       }
@@ -45,23 +59,32 @@ const handler = async (req, res) => {
       res.status(200).json({
         success: false,
         error: "The price of some items in your cart have changed",
+        cartClear: true,
       });
       return;
     }
 
     // CHECK THE DETAILS ARE VALID
 
-    if (req.body.phone.length !== 10 || !Number.isInteger(req.body.phone)) {
+    if (
+      req.body.phone.length !== 10 ||
+      !Number.isInteger(Number(req.body.phone))
+    ) {
       res.status(200).json({
         success: false,
         error: "Please enter your 10 digit phone number",
+        cartClear: false,
       });
       return;
     }
-    if (req.body.pincode.length !== 6 || !Number.isInteger(req.body.pincode)) {
+    if (
+      req.body.pincode.length !== 6 ||
+      !Number.isInteger(Number(req.body.pincode))
+    ) {
       res.status(200).json({
         success: false,
         error: "Please enter your 6 digit pincode",
+        cartClear: false,
       });
       return;
     }
@@ -72,6 +95,11 @@ const handler = async (req, res) => {
       email: req.body.email,
       orderId: req.body.oid,
       address: req.body.address,
+      state: req.body.state,
+      city: req.body.city,
+      pincode: req.body.pincode,
+      phone: req.body.phone,
+      name: req.body.name,
       amount: req.body.subTotal,
       products: req.body.cart,
     });
@@ -134,6 +162,7 @@ const handler = async (req, res) => {
           post_res.on("end", function () {
             let res = JSON.parse(response).body;
             res.success = true;
+            res.cartClear = false;
             resolve(res);
           });
         });

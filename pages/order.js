@@ -1,14 +1,25 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Order from "@/models/Order";
 import mongoose from "mongoose";
 
 const MyOrder = ({ order, clearCart }) => {
   // let products = order.products;
   const router = useRouter();
+  const [date, setDate] = useState();
+
+  let options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
 
   useEffect(() => {
+    const d = new Date(order.createdAt);
+    setDate(d);
+
     if (router.query.clearCart == 1) {
       clearCart();
     }
@@ -23,7 +34,12 @@ const MyOrder = ({ order, clearCart }) => {
       size: "M",
     },
   ];
-  order = { orderId: 654553, status: "Paid", amount: 5555 };
+  order = {
+    orderId: 654553,
+    status: "",
+    amount: 5555,
+    createdAt: new Date().toDateString(),
+  };
 
   return (
     <div>
@@ -46,11 +62,17 @@ const MyOrder = ({ order, clearCart }) => {
                 Order Id: #{order.orderId}
               </h1>
               <div className="leading-relaxed mb-4">
-                Yayy! Your order has been succesfully placed.
+                <p>Yayy! Your order has been succesfully placed.</p>
+                <p>
+                  Order Placed On:{" "}
+                  {date && date.toLocaleDateString("en-IN", options)
+                    ? date.toLocaleDateString("en-IN", options)
+                    : "Not yet Placed"}
+                </p>
                 <p>
                   Your Payment Status is{" "}
                   <span className="font-semibold text-green-400">
-                    {order.status}
+                    {order.status ? order.status : "Pending"}
                   </span>
                 </p>
               </div>
@@ -75,8 +97,9 @@ const MyOrder = ({ order, clearCart }) => {
                     <span className="m-auto  text-gray-900">
                       {products[item].qty}
                     </span>
-                    <span className="m-auto text-gray-900">
-                      ₹{products[item].price}
+                    <span className="m-auto text-sm text-gray-900">
+                    ₹{products[item].price} x {products[item].qty} = ₹
+                      {products[item].price * products[item].qty}
                     </span>
                   </div>
                 );

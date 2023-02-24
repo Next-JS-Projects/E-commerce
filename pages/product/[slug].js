@@ -3,10 +3,19 @@ import mongoose from "mongoose";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
+import Error from "next/error";
 
-const Post = ({ addToCart, product, variants, buyNow }) => {
-  const [color, setColor] = useState(product.color);
-  const [size, setSize] = useState(product.size);
+const Post = ({
+  cart,
+  setKey,
+  addToCart,
+  product,
+  variants,
+  buyNow,
+  error,
+}) => {
+  const [color, setColor] = useState();
+  const [size, setSize] = useState();
 
   const router = useRouter();
   const { slug } = router.query;
@@ -15,9 +24,13 @@ const Post = ({ addToCart, product, variants, buyNow }) => {
   const [service, setService] = useState();
 
   useEffect(() => {
-    setColor(product.color);
-    setSize(product.size);
+    if (!error) {
+      setColor(product.color);
+      setSize(product.size);
+    }
   }, [router.query]);
+
+  // CHECKING PIN CODE IS ACCESSABLE OR NOT
 
   const checkServiceability = async () => {
     const pins = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/pincode`);
@@ -54,11 +67,44 @@ const Post = ({ addToCart, product, variants, buyNow }) => {
     setPin(e.target.value);
   };
 
+  // REFRESHING FOR THE TOP LOADING BAR AND TO INCREASE USER EXPERIENCE
+
   const refreshVariant = (newSize, newColor) => {
     let url = `${process.env.NEXT_PUBLIC_HOST}/product/${variants[newColor][newSize]["slug"]}`;
     // window.location = url;
     router.push(url);
   };
+
+  // 404 ERROR SHOWING TO USER
+
+  if (error == 404) {
+    return <Error statusCode={404} />;
+  }
+
+  // NOTIFYING USER THAT ITEM IS ADDED TO CART
+
+  function addToCartNotify() {
+    <ToastContainer
+      position="top-left"
+      autoClose={1000}
+      hideProgressBar={false}
+      newestOnTop={true}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss={false}
+      pauseOnHover
+      theme="light"
+    />;
+    toast.success("Item added to cart", {
+      position: "top-left",
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      progress: undefined,
+      theme: "light",
+    });
+  }
 
   return (
     <div>
@@ -76,9 +122,9 @@ const Post = ({ addToCart, product, variants, buyNow }) => {
       />
       {/* Same as */}
       <ToastContainer />
-      <section className="text-gray-600 body-font overflow-hidden">
+      <section className="min-h-screen text-gray-600 body-font overflow-hidden">
         <div className="container px-5 py-14 mx-auto">
-          <div className="lg:w-4/5 h-[125vh] mx-auto flex flex-wrap">
+          <div className="lg:w-4/5 h-[15vh] mx-auto flex flex-wrap">
             <img
               alt="ecommerce"
               // className="lg:w-1/2 md:h-[55vh]  px-10 rounded"
@@ -92,7 +138,8 @@ const Post = ({ addToCart, product, variants, buyNow }) => {
               <h1 className="text-gray-900 text-3xl title-font font-medium mb-1">
                 {product.title}({product.size}/{product.color})
               </h1>
-              {/*<div className="flex mb-4">
+              <div>
+                {/*<div className="flex mb-4">
                 <span className="flex items-center">
                   <svg
                     fill="currentColor"
@@ -189,7 +236,8 @@ const Post = ({ addToCart, product, variants, buyNow }) => {
                     </svg>
                   </a>
                 </span>
-  </div>*/}
+              </div>*/}
+              </div>
               <p className="leading-relaxed pt-3">{product.desc}</p>
               <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5">
                 <div className="flex">
@@ -268,22 +316,23 @@ const Post = ({ addToCart, product, variants, buyNow }) => {
                       }}
                       className="rounded border appearance-none border-gray-300 py-2 focus:outline-none  focus:ring-2 focus:ring-pink-200 focus:border-pink-500 text-base pl-3 pr-10"
                     >
-                      {Object.keys(variants[color]).includes("S") && (
+                      {color && Object.keys(variants[color]).includes("S") && (
                         <option value="S">S</option>
                       )}
-                      {Object.keys(variants[color]).includes("M") && (
+                      {color && Object.keys(variants[color]).includes("M") && (
                         <option value="M">M</option>
                       )}
-                      {Object.keys(variants[color]).includes("L") && (
+                      {color && Object.keys(variants[color]).includes("L") && (
                         <option value="L">L</option>
                       )}
-                      {Object.keys(variants[color]).includes("XL") && (
+                      {color && Object.keys(variants[color]).includes("XL") && (
                         <option value="XL">XL</option>
                       )}
 
-                      {Object.keys(variants[color]).includes("XXL") && (
-                        <option value="XXL">XXL</option>
-                      )}
+                      {color &&
+                        Object.keys(variants[color]).includes("XXL") && (
+                          <option value="XXL">XXL</option>
+                        )}
                     </select>
                     <span className="absolute right-0 top-0 h-full w-10 text-center text-gray-600 pointer-events-none flex items-center justify-center">
                       <svg
@@ -302,9 +351,17 @@ const Post = ({ addToCart, product, variants, buyNow }) => {
                 </div>
               </div>
               <div className="flex">
-                <span className="title-font font-medium text-2xl text-gray-900">
-                  ₹{product.price}
-                </span>
+                {product.availableQty > 0 && (
+                  <span className="title-font font-medium text-2xl text-gray-900">
+                    ₹{product.price}
+                  </span>
+                )}
+
+                {product.availableQty <= 0 && (
+                  <span className="title-font font-medium text-2xl text-gray-900">
+                    Out of Stock!
+                  </span>
+                )}
                 <button
                   onClick={() =>
                     buyNow(
@@ -316,22 +373,27 @@ const Post = ({ addToCart, product, variants, buyNow }) => {
                       product.color
                     )
                   }
-                  className="flex ml-8 text-white bg-pink-500 border-0 py-2  px-2 text-sm md:px-6 focus:outline-none  hover:bg-pink-600 rounded"
+                  disabled={product.availableQty <= 0 ? true : false}
+                  className="flex ml-8 disabled:bg-pink-400 text-white bg-pink-500 border-0 py-2  px-2 text-sm md:px-6 focus:outline-none  hover:bg-pink-600 rounded"
                 >
                   Buy Now
                 </button>
                 <button
-                  onClick={() =>
-                    addToCart(
-                      slug,
-                      1,
-                      product.price,
-                      product.title,
-                      product.size,
-                      product.color
-                    )
-                  }
-                  className="flex ml-4 text-white bg-pink-500 border-0 py-2 px-2 text-sm md:px-6 focus:outline-none  hover:bg-pink-600 rounded"
+                  onClick={() => {
+                    {
+                      addToCart(
+                        slug,
+                        1,
+                        product.price,
+                        product.title,
+                        product.size,
+                        product.color
+                      );
+                      addToCartNotify();
+                    }
+                  }}
+                  disabled={product.availableQty <= 0 ? true : false}
+                  className="flex ml-4 disabled:bg-pink-400 text-white bg-pink-500 border-0 py-2 px-2 text-sm md:px-6 focus:outline-none  hover:bg-pink-600 rounded"
                 >
                   Add To Cart
                 </button>
@@ -382,10 +444,19 @@ const Post = ({ addToCart, product, variants, buyNow }) => {
 };
 
 export async function getServerSideProps(context) {
+  let error = null;
+
   if (!mongoose.connection[0]) {
     await mongoose.connect(process.env.MONGO_URI);
   }
   let products = await Product.findOne({ slug: context.query.slug });
+
+  if (products == null) {
+    return {
+      props: { error: 404 },
+    };
+  }
+
   let variants = await Product.find({ title: products.title });
   let colorSizeSlug = {};
 
@@ -400,6 +471,7 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
+      error: error,
       product: JSON.parse(JSON.stringify(products)),
       variants: JSON.parse(JSON.stringify(colorSizeSlug)),
     },

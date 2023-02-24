@@ -19,13 +19,60 @@ const Checkout = ({ cart, clearCart, addToCart, removeFromCart, subTotal }) => {
   const [disabled, setDisabled] = useState(true);
 
   useEffect(() => {
-    let user = JSON.parse(localStorage.getItem("myuser"));
+    let myuser = JSON.parse(localStorage.getItem("myuser"));
 
-    if (user.token) {
-      setUser(user);
-      setEmail(user.email);
+    if (myuser && myuser.token) {
+      setUser(myuser);
+      setEmail(myuser.email);
+      fetchData(myuser.token)
     }
   }, []);
+
+  useEffect(() => {
+    if (
+      name.length > 3 &&
+      email.length > 3 &&
+      phone.length > 9 &&
+      address.length > 3 &&
+      pincode.length > 5
+    ) {
+      setDisabled(false);
+    } else {
+      setDisabled(true);
+    }
+  }, [name, email, phone, pincode, address]);
+
+  const fetchData = async (myuser) => {
+    let data = { token: myuser };
+    let response = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getUser`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    let res = await response.json();
+    setName(res.name);
+    setAddress(res.address);
+    setPhone(res.phone);
+    setPincode(res.pincode);
+    getPinCode(res.pincode)
+  };
+
+
+  const getPinCode = async (pin) => {
+    const pins = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/pincode`);
+    const pinJson = await pins.json();
+    if (Object.keys(pinJson).includes(pin)) {
+      setState(pinJson[pin][1]);
+      setCity(pinJson[pin][0]);
+    } else {
+      setState("");
+      setCity("");
+    }
+  }
+
 
   const handleChange = async (e) => {
     if (e.target.name == "name") {
@@ -39,31 +86,11 @@ const Checkout = ({ cart, clearCart, addToCart, removeFromCart, subTotal }) => {
     } else if (e.target.name == "pincode") {
       setPincode(e.target.value);
       if (e.target.value.length == 6) {
-        const pins = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/pincode`);
-        const pinJson = await pins.json();
-        if (Object.keys(pinJson).includes(e.target.value)) {
-          setState(pinJson[e.target.value][1]);
-          setCity(pinJson[e.target.value][0]);
-        } else {
-          setState("");
-          setCity("");
-        }
+        getPinCode(e.target.value)
       } else {
         setState("");
         setCity("");
       }
-    }
-
-    if (
-      name.length > 3 &&
-      email.length > 3 &&
-      phone.length > 3 &&
-      address.length > 3 &&
-      pincode.length > 3
-    ) {
-      setDisabled(false);
-    } else {
-      setDisabled(true);
     }
   };
 
@@ -101,9 +128,9 @@ const Checkout = ({ cart, clearCart, addToCart, removeFromCart, subTotal }) => {
         },
         handler: {
           notifyMerchant: function (eventName, data) {
-            console.log("notifyMerchant handler function called");
-            console.log("eventName => ", eventName);
-            console.log("data => ", data);
+            // console.log(notifyMerchant handler function called");
+            // console.log("eventName => ", eventName);
+            // console.log("data => ", data);
           },
         },
       };
@@ -114,10 +141,12 @@ const Checkout = ({ cart, clearCart, addToCart, removeFromCart, subTotal }) => {
           window.Paytm.CheckoutJS.invoke();
         })
         .catch(function onError(error) {
-          console.log("error => ", error);
+          // console.log("error => ", error);
         });
     } else {
-      clearCart();
+      if (txnResponse.cartClear) {
+        clearCart();
+      }
       toast.error(txnResponse.error, {
         position: "bottom-center",
         autoClose: 1000,
@@ -162,7 +191,7 @@ const Checkout = ({ cart, clearCart, addToCart, removeFromCart, subTotal }) => {
       {/* USER INFORMATION */}
 
       <div className="container px-2 m-auto">
-        <h1 className="font-bold text-3xl my-8 text-center">Checkout</h1>
+        <h1 className="font-semibold text-3xl my-8 text-center">Checkout</h1>
         <h2 className="font-semibold text-xl">1. Delievery Details</h2>
         <div className="mx-auto flex my-2">
           {/*NAME*/}
@@ -208,7 +237,6 @@ const Checkout = ({ cart, clearCart, addToCart, removeFromCart, subTotal }) => {
                   name="email"
                   value={email}
                   onChange={handleChange}
-                  // readOnly={true}
                   className="w-full bg-white rounded border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                 />
               )}

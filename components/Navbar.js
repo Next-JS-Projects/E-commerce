@@ -34,16 +34,35 @@ const Navbar = ({
     //   ref.current.classList.remove("translate-x-0");
     //   ref.current.classList.add("translate-x-full");
     // }
-    setSidebar(!sidebar);
+    setTimeout(() => {
+      setSidebar(!sidebar);
+    }, 100);
   };
 
   useEffect(() => {
-    Object.keys(cart).length === 0 && setSidebar(true);
-    let exempted = ["/checkout", "/orders", "/order", "myaccount"];
+    Object.keys(cart).length == 0 && setSidebar(true);
+
+    let exempted = [
+      "/checkout",
+      "/orders",
+      "/order",
+      "myaccount",
+      "/shirts",
+      "/hoodies",
+      "/",
+      "/myaccount",
+      `/product/`,
+      "/login",
+      "/signup",
+      "/mugs",
+      "/stickers",
+      "/forgot",
+    ];
     if (exempted.includes(router.pathname)) {
       setSidebar(false);
     }
   }, []);
+
 
   return (
     <div className="sticky top-0 bg-white z-10">
@@ -103,6 +122,9 @@ const Navbar = ({
           </ul>
         </nav>
         <div className="cursor-pointer items-center cart absolute right-0 mx-5 top-4 flex">
+          <span className="font-serif text-sm  max-[500px]:hidden">
+            {user.value ? <span>Hlw, {user.email}</span> : ""}
+          </span>
           <a
             onMouseOver={() => setDropdown(true)}
             onMouseLeave={() => setDropdown(false)}
@@ -159,9 +181,8 @@ const Navbar = ({
       {/* CART SIDEBAR */}
       <div
         ref={ref}
-        className={`w-72 min-h-screen sideCart overflow-hidden  hover:overflow-y-scroll absolute top-0 right-0 bg-pink-100 py-10 px-8 transform transition-transform ${
-          sidebar ? "right-0" : "-right-96"
-        } `}
+        className={`w-72 min-h-screen sideCart overflow-hidden  hover:overflow-y-scroll absolute top-0 right-0 bg-pink-100 py-10 px-8 transform transition-transform ${sidebar ? "right-0" : "-right-96"
+          } `}
       >
         <h2 className="font-bold text-xl text-center">Shopping Cart</h2>
         <span
@@ -189,7 +210,7 @@ const Navbar = ({
                   </div>
                   <div className="flex items-center justify-center w-1/3 font-semibold">
                     <AiFillMinusCircle
-                      onClick={() =>
+                      onClick={() => {
                         removeFromCart(
                           item,
                           1,
@@ -197,13 +218,17 @@ const Navbar = ({
                           cart[item].name,
                           cart[item].size,
                           cart[item].variant
-                        )
-                      }
+                        );
+
+                        if (Object.keys(cart).length == 0) {
+                          toggleCart();
+                        }
+                      }}
                       className="mx-2 cursor-pointer text-pink-500"
                     />
                     {cart[item].qty}
                     <AiFillPlusCircle
-                      onClick={() =>
+                      onClick={() => {
                         addToCart(
                           item,
                           1,
@@ -211,8 +236,10 @@ const Navbar = ({
                           cart[item].name,
                           cart[item].size,
                           cart[item].variant
-                        )
-                      }
+                        );
+
+                        // setSidebar(true);
+                      }}
                       className="mx-2 cursor-pointer text-pink-500"
                     />
                   </div>
@@ -233,7 +260,10 @@ const Navbar = ({
             </button>
           </Link>
           <button
-            onClick={clearCart}
+            onClick={() => {
+              clearCart();
+              toggleCart();
+            }}
             disabled={Object.keys(cart).length === 0}
             className="disabled:bg-pink-400  flex mt-6 mr-2 text-white bg-pink-500 border-0 py-2 px-2 focus:outline-none hover:bg-pink-600 rounded text-sm"
           >

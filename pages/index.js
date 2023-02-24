@@ -17,7 +17,7 @@ export default function Home() {
         />
       </Head>
       <div>
-        <Image src="/poster.png" alt="" width={1440} height={480} />
+        <Image src="/posters.jpg" alt="poster" width={1440} height={637} className="bg-contain" />
       </div>
 
       <section className="text-gray-600 body-font min-h-screen">
