@@ -11,6 +11,11 @@ import theme from "@/src/theme/theme";
 export default function Index() {
     return (
         <ThemeProvider theme={theme}>
+            <style jsx>{`
+                footer{
+                    display: none
+              }`
+            } </style>
             <FullLayout>
                 <Grid container spacing={0}>
                     <Grid item xs={12} lg={12}>
@@ -28,6 +33,6 @@ export default function Index() {
                     </Grid>
                 </Grid>
             </FullLayout>
-        </ThemeProvider>
+        </ThemeProvider >
     );
 }

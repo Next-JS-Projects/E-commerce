@@ -96,7 +96,7 @@ const SalesOverview = () => {
   const seriessalesoverview = [
     {
       name: "Ample Admin",
-      data: [355, 390, 300, 350, 390, 180, 355, 390, 300, 350, 390, 180],
+      data: [150, 390, 300, 350, 390, 180, 355, 390, 300, 350, 390, 180],
     },
     {
       name: "Pixel Admin",

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import FeatherIcon from "feather-icons-react";
 import Image from "next/image";
 import userimg from "../../../assets/images/users/user2.jpg";
@@ -14,7 +14,9 @@ import {
   Divider,
 } from "@mui/material";
 const ProfileDD = () => {
-  const [anchorEl4, setAnchorEl4] = React.useState(null);
+  const [anchorEl4, setAnchorEl4] = useState(null);
+  const [user, setUser] = useState("")
+
 
   const handleClick4 = (event) => {
     setAnchorEl4(event.currentTarget);
@@ -23,6 +25,20 @@ const ProfileDD = () => {
   const handleClose4 = () => {
     setAnchorEl4(null);
   };
+
+  console.log(user, "iuacgdj")
+
+  useEffect(() => {
+    let token = localStorage.getItem("myuser")
+    let parseToken = JSON.parse(token)
+    if (token) {
+      console.log(token, "pppoopp")
+      setUser(parseToken.email)
+    } else {
+      setUser("Guest")
+    }
+  }, [])
+
   return (
     <>
       <Button
@@ -33,13 +49,13 @@ const ProfileDD = () => {
         onClick={handleClick4}
       >
         <Box display="flex" alignItems="center">
-          <Image
+          {user && user.image ? <Image
             src={userimg}
             alt={userimg}
             width="30"
             height="30"
             className="roundedCircle"
-          />
+          /> : ""}
           <Box
             sx={{
               display: {
@@ -64,7 +80,7 @@ const ProfileDD = () => {
                 ml: 1,
               }}
             >
-              Julia
+              <p>{user && user.substring(0, 10)}...</p>
             </Typography>
             <FeatherIcon icon="chevron-down" width="20" height="20" />
           </Box>

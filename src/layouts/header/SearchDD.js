@@ -11,7 +11,7 @@ const SearchDD = () => {
   };
   return (
     <>
-      <IconButton
+      {/* <IconButton
         aria-label="show 4 new mails"
         color="inherit"
         aria-controls="search-menu"
@@ -19,8 +19,8 @@ const SearchDD = () => {
         onClick={() => setShowDrawer2(true)}
         size="large"
       >
-        <FeatherIcon icon="search" width="20" height="20" />
-      </IconButton>
+            <FeatherIcon icon="search" width="20" height="20" />
+        </IconButton> */}
       <Drawer
         anchor="top"
         open={showDrawer2}

@@ -40,6 +40,7 @@ const FullLayout = ({ children }) => {
         sx={{
           paddingLeft: isSidebarOpen && lgUp ? "265px" : "",
           backgroundColor: "#fbfbfb",
+          boxShadow: "2px 2px 5px #dfdbdb"
         }}
         toggleMobileSidebar={() => setMobileSidebarOpen(true)}
       />
@@ -52,7 +53,7 @@ const FullLayout = ({ children }) => {
         <Container
           maxWidth={false}
           sx={{
-            paddingTop: "20px",
+            paddingTop: "0px",
             paddingLeft: isSidebarOpen && lgUp ? "280px!important" : "",
           }}
         >
